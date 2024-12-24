@@ -22,7 +22,7 @@ const io = new Server(server, {
   cors: {
     origin: [
       "http://localhost:5173", // Your React frontend URL
-      "https://your-other-frontend-url.com", // Add other allowed origins if needed
+      "https://taskmanager-frontend-6rmh.vercel.app", // Add other allowed origins if needed
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // If sending cookies or authorization headers
