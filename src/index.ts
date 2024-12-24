@@ -38,7 +38,7 @@ app.use(
       "http://localhost:5173",
       "https://taskmanager-frontend-6rmh.vercel.app",
     ],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: ["GET", "POST"],  // Array format
     credentials: true,
   })
 );
