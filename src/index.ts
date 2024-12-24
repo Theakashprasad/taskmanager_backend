@@ -36,9 +36,10 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://taskmanager-frontend-6rmh.vercel.app",
-    ],
+      "https://taskmanager-frontend-6rmh.vercel.app"
+      ],
     methods: ["GET", "POST"],  // Array format
+    transports: ["websocket", "polling"],  // Ensure websocket and polling
     credentials: true,
   })
 );
