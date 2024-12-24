@@ -16,6 +16,13 @@ const {
 const app = express();
 dotenv.config();
 
+
+app.use(cors({
+  origin: 'https://taskmanager-frontend-6rmh.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 /////////////////////// CORS SOCKET
 const server = http.createServer(app);
 const io = new Server(server, {
