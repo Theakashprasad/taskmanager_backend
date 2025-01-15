@@ -17,10 +17,15 @@ const app = express();
 dotenv.config();
 
 /////////////////////// CORS SOCKET
+app.options("*", cors());
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: [
+      "https://taskmanager-rose-six.vercel.app", // Deployed frontend
+      "http://localhost:5173", // React frontend (local)
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Include credentials if needed
     allowedHeaders: ["Content-Type", "Authorization"], // Ensure headers are allowed
@@ -41,7 +46,6 @@ app.use(
   })
 );
 
-app.options("*", cors());
 
 ///////////////////////REGISTER
 app.use("/api/", authrouter);
