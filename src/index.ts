@@ -17,7 +17,6 @@ const app = express();
 dotenv.config();
 
 /////////////////////// CORS SOCKET
-app.options("*", cors());
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -35,8 +34,8 @@ app.use(express.urlencoded({ extended: true })); // For parsing application/x-ww
 app.use(
   cors({
     origin: [
-      "https://taskmanager-rose-six.vercel.app",
       "http://localhost:5173",
+      "https://taskmanager-rose-six.vercel.app",
     ],
     methods: ["GET", "POST"], // Array format
     credentials: true,
