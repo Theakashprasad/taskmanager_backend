@@ -23,7 +23,6 @@ const io = new Server(server, {
     origin: [
       "https://taskmanager-rose-six.vercel.app", // Deployed frontend
       "http://localhost:5173", // React frontend (local)
-      "https://taskmanager-mppo0yk1l-akashs-projects-848d32a6.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Include credentials if needed
@@ -39,7 +38,6 @@ app.use(
     origin: [
       "https://taskmanager-rose-six.vercel.app",
       "http://localhost:5173",
-      "https://taskmanager-mppo0yk1l-akashs-projects-848d32a6.vercel.app",
     ],
     methods: ["GET", "POST"], // Array format
     credentials: true,
