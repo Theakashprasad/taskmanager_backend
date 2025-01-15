@@ -20,10 +20,7 @@ dotenv.config();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "https://taskmanager-rose-six.vercel.app", // Deployed frontend
-      "http://localhost:5173", // React frontend (local)
-    ],
+    origin: '*',
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Include credentials if needed
     allowedHeaders: ["Content-Type", "Authorization"], // Ensure headers are allowed
