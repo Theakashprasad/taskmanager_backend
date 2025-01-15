@@ -16,28 +16,37 @@ const {
 const app = express();
 dotenv.config();
 
+
+/////////////////////// CORS
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: [
+      "https://taskmanager-rose-six.vercel.app",
+      "http://localhost:5173",
+      'https://taskmanager-git-main-akashs-projects-848d32a6.vercel.app'
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
 /////////////////////// CORS SOCKET
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "https://taskmanager-rose-six.vercel.app",
+      "http://localhost:5173",
+      'https://taskmanager-git-main-akashs-projects-848d32a6.vercel.app'
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true, // Include credentials if needed
-    allowedHeaders: ["Content-Type", "Authorization"], // Ensure headers are allowed
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   },
 });
-
-/////////////////////// CORS
-app.use(express.json()); // For parsing application/json
-app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST"], // Array format
-    credentials: true,
-  })
-);
 
 ///////////////////////REGISTER
 app.use("/api/", authrouter);
