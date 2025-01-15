@@ -34,8 +34,7 @@ app.use(express.urlencoded({ extended: true })); // For parsing application/x-ww
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
-      "https://taskmanager-rose-six.vercel.app",
+      "*",
     ],
     methods: ["GET", "POST"], // Array format
     credentials: true,
