@@ -21,7 +21,7 @@ dotenv.config();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Include credentials if needed
     allowedHeaders: ["Content-Type", "Authorization"], // Ensure headers are allowed
@@ -33,14 +33,11 @@ app.use(express.json()); // For parsing application/json
 app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 app.use(
   cors({
-    origin: [
-      "*",
-    ],
+    origin: "*",
     methods: ["GET", "POST"], // Array format
     credentials: true,
   })
 );
-
 
 ///////////////////////REGISTER
 app.use("/api/", authrouter);
