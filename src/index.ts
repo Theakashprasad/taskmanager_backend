@@ -23,9 +23,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:5173", // React frontend (local)
       "https://taskmanager-bhxjoext5-akashs-projects-848d32a6.vercel.app", // Deployed frontend
       "https://taskmanager-rose-six.vercel.app", // Deployed frontend
+      "http://localhost:5173", // React frontend (local)
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Include credentials if needed
@@ -38,9 +38,9 @@ app.use(express.urlencoded({ extended: true })); // For parsing application/x-ww
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", 
       "https://taskmanager-bhxjoext5-akashs-projects-848d32a6.vercel.app",
-      "https://taskmanager-rose-six.vercel.app"
+      "https://taskmanager-rose-six.vercel.app",
+      "http://localhost:5173", 
       ],
     methods: ["GET", "POST"],  // Array format
     transports: ["websocket", "polling"],  // Ensure websocket and polling
