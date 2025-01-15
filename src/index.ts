@@ -17,22 +17,18 @@ const app = express();
 dotenv.config();
 
 
-app.use(cors({
-  origin: 'https://taskmanager-frontend-6rmh.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 /////////////////////// CORS SOCKET
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:5173", // Your React frontend URL
-      "https://taskmanager-frontend-6rmh.vercel.app", // Add other allowed origins if needed
+      "http://localhost:5173", // React frontend (local)
+      "https://taskmanager-bhxjoext5-akashs-projects-848d32a6.vercel.app", // Deployed frontend
+      "https://taskmanager-rose-six.vercel.app", // Deployed frontend
     ],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, // If sending cookies or authorization headers
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // Include credentials if needed
   },
 });
 
@@ -42,8 +38,9 @@ app.use(express.urlencoded({ extended: true })); // For parsing application/x-ww
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
-      "https://taskmanager-frontend-6rmh.vercel.app"
+      "http://localhost:5173", 
+      "https://taskmanager-bhxjoext5-akashs-projects-848d32a6.vercel.app",
+      "https://taskmanager-rose-six.vercel.app"
       ],
     methods: ["GET", "POST"],  // Array format
     transports: ["websocket", "polling"],  // Ensure websocket and polling
@@ -56,10 +53,8 @@ app.use("/api/", authrouter);
 
 ///////////////////////SOCKET CONNECTion
 io.on("connection", (socket: any) => {
-  console.log("A user connected", socket);
-
   socket.on("addTask", addTaskHandler.bind(null, socket));
-  socket.on("getTasks", getTasksHandler.bind(null, socket));
+  socket.on("getTasks", getTasksHandler.bind(null, socket)); 
   socket.on("isCompleted", toggleTaskCompletionHandler.bind(null, socket));
   socket.on("deleteTask", deleteTaskHandler.bind(null, socket));
   // socket.on("handleTaskEdit", editTaskHandler.bind(null, socket));

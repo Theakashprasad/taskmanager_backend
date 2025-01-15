@@ -8,7 +8,7 @@ const JWT_SECRET_KEY = process.env.MY_SECRET as string;
 
 interface UserTask {
   id: string;
-  title: string; 
+  title: string;
   description: string;
 }
 
@@ -47,15 +47,14 @@ const addTaskHandler = async (
     await newTask.save();
     socket.emit("taskAdded", newTask);
     socket.broadcast.emit("taskAdded", newTask);
-
   } catch (error) {
     console.error("Error adding task:", error);
   }
 };
 
-const getTasksHandler = async (socket:Socket, token:AddTaskPayload) => {
-  console.log('fromt he get task handeler');
-  
+const getTasksHandler = async (socket: Socket, token: AddTaskPayload) => {
+  console.log("fromt he get task handeler");
+
   try {
     const decoded = verifyJWT(token);
     if (!decoded) {
@@ -63,15 +62,19 @@ const getTasksHandler = async (socket:Socket, token:AddTaskPayload) => {
       return;
     }
 
-    const tasks = await TaskModel.find({ userId: decoded.id }).sort({ createdAt: -1 });
+    const tasks = await TaskModel.find({ userId: decoded.id }).sort({
+      createdAt: -1,
+    });
     socket.emit("fetchTask", tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
   }
 };
 
-const toggleTaskCompletionHandler = async (socket:Socket, { token, userId }:AddTaskPayload) => {
-  
+const toggleTaskCompletionHandler = async (
+  socket: Socket,
+  { token, userId }: AddTaskPayload
+) => {
   try {
     const decoded = verifyJWT(token);
     if (!decoded) {
@@ -88,29 +91,35 @@ const toggleTaskCompletionHandler = async (socket:Socket, { token, userId }:AddT
     task.isCompleted = !task.isCompleted;
     await task.save();
 
-    socket.emit("taskUpdated", { 
+    socket.emit("taskUpdated", {
       success: task.isCompleted,
-      message: task.isCompleted ? "Task marked as completed" : "Task marked as incomplete",
-      id: task._id
+      message: task.isCompleted
+        ? "Task marked as completed"
+        : "Task marked as incomplete",
+      id: task._id,
     });
-    socket.broadcast.emit("taskUpdated", { 
+    socket.broadcast.emit("taskUpdated", {
       success: task.isCompleted,
-      message: task.isCompleted ? "Task marked as completed" : "Task marked as incomplete",
-      id: task._id
+      message: task.isCompleted
+        ? "Task marked as completed"
+        : "Task marked as incomplete",
+      id: task._id,
     });
   } catch (error) {
     console.error("Error updating task:", error);
     socket.emit("error", "Error updating task");
   }
 };
- 
-const deleteTaskHandler = async (socket:Socket, id:string) => {
+
+const deleteTaskHandler = async (socket: Socket, id: string, token: string) => {
   try {
-    
-    // await TaskModel.findByIdAndDelete(id);
+    const decoded = verifyJWT(token);
+    if (!decoded) {
+      socket.emit("error", "Invalid token");
+      return;
+    }
     socket.emit("taskDeleted", id);
     socket.broadcast.emit("taskDeleted", id);
-    
   } catch (error) {
     console.error("Error deleting task:", error);
     socket.emit("error", "Error deleting task");
@@ -147,4 +156,4 @@ module.exports = {
   toggleTaskCompletionHandler,
   deleteTaskHandler,
   // editTaskHandler,
-};  
+};
