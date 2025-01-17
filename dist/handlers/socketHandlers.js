@@ -47,14 +47,16 @@ const addTaskHandler = (socket_1, _a) => __awaiter(void 0, [socket_1, _a], void 
     }
 });
 const getTasksHandler = (socket, token) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('fromt he get task handeler');
+    console.log("fromt he get task handeler");
     try {
         const decoded = verifyJWT(token);
         if (!decoded) {
             socket.emit("error", "Invalid token");
             return;
         }
-        const tasks = yield taskModel_1.default.find({ userId: decoded.id }).sort({ createdAt: -1 });
+        const tasks = yield taskModel_1.default.find({ userId: decoded.id }).sort({
+            createdAt: -1,
+        });
         socket.emit("fetchTask", tasks);
     }
     catch (error) {
@@ -77,13 +79,17 @@ const toggleTaskCompletionHandler = (socket_1, _a) => __awaiter(void 0, [socket_
         yield task.save();
         socket.emit("taskUpdated", {
             success: task.isCompleted,
-            message: task.isCompleted ? "Task marked as completed" : "Task marked as incomplete",
-            id: task._id
+            message: task.isCompleted
+                ? "Task marked as completed"
+                : "Task marked as incomplete",
+            id: task._id,
         });
         socket.broadcast.emit("taskUpdated", {
             success: task.isCompleted,
-            message: task.isCompleted ? "Task marked as completed" : "Task marked as incomplete",
-            id: task._id
+            message: task.isCompleted
+                ? "Task marked as completed"
+                : "Task marked as incomplete",
+            id: task._id,
         });
     }
     catch (error) {
@@ -91,9 +97,13 @@ const toggleTaskCompletionHandler = (socket_1, _a) => __awaiter(void 0, [socket_
         socket.emit("error", "Error updating task");
     }
 });
-const deleteTaskHandler = (socket, id) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteTaskHandler = (socket, id, token) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // await TaskModel.findByIdAndDelete(id);
+        const decoded = verifyJWT(token);
+        if (!decoded) {
+            socket.emit("error", "Invalid token");
+            return;
+        }
         socket.emit("taskDeleted", id);
         socket.broadcast.emit("taskDeleted", id);
     }

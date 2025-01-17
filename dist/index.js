@@ -13,35 +13,39 @@ const authrouter_1 = __importDefault(require("./presentation/router/authrouter")
 const { addTaskHandler, getTasksHandler, toggleTaskCompletionHandler, deleteTaskHandler, editTaskHandler, } = require("./handlers/socketHandlers");
 const app = express();
 dotenv_1.default.config();
-/////////////////////// CORS SOCKET
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: [
-            "http://localhost:5173", // Your React frontend URL
-            "https://your-other-frontend-url.com", // Add other allowed origins if needed
-        ],
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        credentials: true, // If sending cookies or authorization headers
-    },
-});
 /////////////////////// CORS
-app.use(express.json()); // For parsing application/json
-app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 app.use(cors({
     origin: [
-        "http://localhost:5173",
-        "https://inventory-frontend-kappa-liart.vercel.app",
-        "https://inventory-frontend-4kqb7knr4-akashs-projects-848d32a6.vercel.app",
+        "https://taskmanager-pleu58j0i-akashs-projects-848d32a6.vercel.app",
+        "https://taskmanager-rose-six.vercel.app"
     ],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+/////////////////////// CORS SOCKET
+const io = new Server(server, {
+    cors: {
+        origin: "https://taskmanager-rose-six.vercel.app",
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
+        transports: ['websocket', 'polling']
+    },
+    allowEIO3: true, // Enable Socket.IO v3 compatibility
+    pingTimeout: 60000,
+    pingInterval: 25000
+});
 ///////////////////////REGISTER
 app.use("/api/", authrouter_1.default);
 ///////////////////////SOCKET CONNECTion
 io.on("connection", (socket) => {
-    console.log("A user connected", socket);
+    console.log('user socket connection', socket.id);
     socket.on("addTask", addTaskHandler.bind(null, socket));
     socket.on("getTasks", getTasksHandler.bind(null, socket));
     socket.on("isCompleted", toggleTaskCompletionHandler.bind(null, socket));
@@ -51,6 +55,7 @@ io.on("connection", (socket) => {
         console.log("A user disconnected");
     });
 });
+app.options('*', cors());
 server.listen(3000, () => {
     (0, dbConfig_1.default)();
     console.log("Server running on http://localhost:3000");

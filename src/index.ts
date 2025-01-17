@@ -52,6 +52,8 @@ app.use("/api/", authrouter);
 
 ///////////////////////SOCKET CONNECTion
 io.on("connection", (socket: any) => {
+  console.log('user socket connection', socket.id);
+  
   socket.on("addTask", addTaskHandler.bind(null, socket));
   socket.on("getTasks", getTasksHandler.bind(null, socket));
   socket.on("isCompleted", toggleTaskCompletionHandler.bind(null, socket));
