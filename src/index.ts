@@ -21,7 +21,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "https://taskmanager-rose-six.vercel.app",
+    origin: [
+      "https://taskmanager-rose-six.vercel.app",
+      "https://taskmanager-kn67deagt-akashs-projects-848d32a6.vercel.app",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   })
@@ -31,7 +34,10 @@ app.use(
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://taskmanager-rose-six.vercel.app",
+    origin: [
+      "https://taskmanager-rose-six.vercel.app",
+      "https://taskmanager-kn67deagt-akashs-projects-848d32a6.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
