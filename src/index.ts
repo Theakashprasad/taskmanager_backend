@@ -15,34 +15,31 @@ const {
 } = require("./handlers/socketHandlers");
 const app = express();
 dotenv.config();
+const server = http.createServer(app);
 
 /////////////////////// CORS
+app.use(cors({
+  origin: ["https://taskmanager-rose-six.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: [
-      "https://taskmanager-rose-six.vercel.app",
-      "https://taskmanager-kn67deagt-akashs-projects-848d32a6.vercel.app",
-    ],
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
-
 /////////////////////// CORS SOCKET
-const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "https://taskmanager-rose-six.vercel.app",
-      "https://taskmanager-kn67deagt-akashs-projects-848d32a6.vercel.app",
-    ],
+    origin: "https://taskmanager-rose-six.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
+    transports: ['websocket', 'polling']
   },
+  allowEIO3: true, // Enable Socket.IO v3 compatibility
+  pingTimeout: 60000,
+  pingInterval: 25000
 });
+
 
 ///////////////////////REGISTER
 app.use("/api/", authrouter);
@@ -59,6 +56,7 @@ io.on("connection", (socket: any) => {
     console.log("A user disconnected");
   });
 });
+app.options('*', cors());
 
 server.listen(3000, () => {
   mongoDB();
