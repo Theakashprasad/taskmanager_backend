@@ -17,35 +17,38 @@ const server = http.createServer(app);
 /////////////////////// CORS
 app.use(cors({
     origin: [
-        "https://taskmanager-pleu58j0i-akashs-projects-848d32a6.vercel.app",
-        "https://taskmanager-rose-six.vercel.app"
+        "https://taskmanager-rkd526bek-akashs-projects-848d32a6.vercel.app",
+        "https://taskmanager-rose-six.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 /////////////////////// CORS SOCKET
 const io = new Server(server, {
     cors: {
-        origin: "https://taskmanager-rose-six.vercel.app",
+        origin: [
+            "https://taskmanager-rkd526bek-akashs-projects-848d32a6.vercel.app",
+            "https://taskmanager-rose-six.vercel.app",
+        ],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
         allowedHeaders: ["Content-Type", "Authorization"],
-        transports: ['websocket', 'polling']
+        transports: ["websocket", "polling"],
     },
     allowEIO3: true, // Enable Socket.IO v3 compatibility
     pingTimeout: 60000,
-    pingInterval: 25000
+    pingInterval: 25000,
 });
 ///////////////////////REGISTER
 app.use("/api/", authrouter_1.default);
 ///////////////////////SOCKET CONNECTion
 io.on("connection", (socket) => {
-    console.log('user socket connection', socket.id);
+    console.log("user socket connection", socket.id);
     socket.on("addTask", addTaskHandler.bind(null, socket));
     socket.on("getTasks", getTasksHandler.bind(null, socket));
     socket.on("isCompleted", toggleTaskCompletionHandler.bind(null, socket));
@@ -55,7 +58,7 @@ io.on("connection", (socket) => {
         console.log("A user disconnected");
     });
 });
-app.options('*', cors());
+app.options("*", cors());
 server.listen(3000, () => {
     (0, dbConfig_1.default)();
     console.log("Server running on http://localhost:3000");
