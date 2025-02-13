@@ -33,6 +33,12 @@ const addTaskHandler = (socket_1, _a) => __awaiter(void 0, [socket_1, _a], void 
             socket.emit("error", "Invalid token");
             return;
         }
+        const taskExists = yield taskModel_1.default.find({ title: userTask.title });
+        console.log(taskExists);
+        if (taskExists.length) {
+            socket.emit("taskExists", "Task Exists");
+            return;
+        }
         const newTask = new taskModel_1.default({
             userId: decoded.id,
             title: userTask.title,
@@ -112,30 +118,45 @@ const deleteTaskHandler = (socket, id, token) => __awaiter(void 0, void 0, void 
         socket.emit("error", "Error deleting task");
     }
 });
-// const editTaskHandler = async (socket, { editingTask, editableTaskTitle, token }) => {
-//   try {
-//     const decoded = verifyJWT(token);
-//     if (!decoded) {
-//       socket.emit("error", "Invalid token");
-//       return;
-//     }
-//     const task = await TaskModel.findById(editingTask._id);
-//     if (!task) {
-//       socket.emit("error", "Task not found");
-//       return;
-//     }
-//     task.title = editableTaskTitle;
-//     await task.save();
-//     socket.emit("taskUpdated", { success: true, message: "Task updated" });
-//   } catch (error) {
-//     console.error("Error editing task:", error);
-//     socket.emit("error", "Error editing task");
-//   }
-// };
+const editTaskHandler = (socket_1, _a) => __awaiter(void 0, [socket_1, _a], void 0, function* (socket, { editingTask, userTask, token }) {
+    try {
+        const decoded = verifyJWT(token);
+        if (!decoded) {
+            socket.emit("error", "Invalid token");
+            return;
+        }
+        const task = yield taskModel_1.default.findById(editingTask._id);
+        if (!task) {
+            socket.emit("error", "Task not found");
+            return;
+        }
+        task.title = userTask.title;
+        task.description = userTask.description;
+        yield task.save();
+        // socket.emit("taskAdded", task);
+        socket.emit("taskEdited", {
+            success: true,
+            message: "Task updated",
+            userTask,
+            editingTask,
+        });
+        socket.broadcast.emit("taskEdited", {
+            success: true,
+            message: "Task updated",
+            userTask,
+            editingTask,
+        });
+        // socket.emit("taskUpdated", { success: true, message: "Task updated" });
+    }
+    catch (error) {
+        console.error("Error editing task:", error);
+        socket.emit("error", "Error editing task");
+    }
+});
 module.exports = {
     addTaskHandler,
     getTasksHandler,
     toggleTaskCompletionHandler,
     deleteTaskHandler,
-    // editTaskHandler,
+    editTaskHandler,
 };

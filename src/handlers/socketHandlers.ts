@@ -16,6 +16,7 @@ interface AddTaskPayload {
   userId: string;
   userTask: UserTask;
   token: string;
+  editingTask: any;
 }
 
 const verifyJWT = (token: any) => {
@@ -39,6 +40,12 @@ const addTaskHandler = async (
       return;
     }
 
+    const taskExists = await TaskModel.find({ title: userTask.title });
+    console.log(taskExists);
+    if (taskExists.length) {
+      socket.emit("taskExists", "Task Exists");
+      return;
+    }
     const newTask = new TaskModel({
       userId: decoded.id,
       title: userTask.title,
@@ -126,34 +133,51 @@ const deleteTaskHandler = async (socket: Socket, id: string, token: string) => {
   }
 };
 
-// const editTaskHandler = async (socket, { editingTask, editableTaskTitle, token }) => {
-//   try {
-//     const decoded = verifyJWT(token);
-//     if (!decoded) {
-//       socket.emit("error", "Invalid token");
-//       return;
-//     }
+const editTaskHandler = async (
+  socket: Socket,
+  { editingTask, userTask, token }: AddTaskPayload
+) => {
+  try {
+    const decoded = verifyJWT(token);
+    if (!decoded) {
+      socket.emit("error", "Invalid token");
+      return;
+    }
 
-//     const task = await TaskModel.findById(editingTask._id);
-//     if (!task) {
-//       socket.emit("error", "Task not found");
-//       return;
-//     }
+    const task = await TaskModel.findById(editingTask._id);
+    if (!task) {
+      socket.emit("error", "Task not found");
+      return;
+    }
 
-//     task.title = editableTaskTitle;
-//     await task.save();
+    task.title = userTask.title;
+    task.description = userTask.description;
+    await task.save();
+    // socket.emit("taskAdded", task);
 
-//     socket.emit("taskUpdated", { success: true, message: "Task updated" });
-//   } catch (error) {
-//     console.error("Error editing task:", error);
-//     socket.emit("error", "Error editing task");
-//   }
-// };
+    socket.emit("taskEdited", {
+      success: true,
+      message: "Task updated",
+      userTask,
+      editingTask,
+    });
+    socket.broadcast.emit("taskEdited", {
+      success: true,
+      message: "Task updated",
+      userTask,
+      editingTask,
+    });
+    // socket.emit("taskUpdated", { success: true, message: "Task updated" });
+  } catch (error) {
+    console.error("Error editing task:", error);
+    socket.emit("error", "Error editing task");
+  }
+};
 
 module.exports = {
   addTaskHandler,
   getTasksHandler,
   toggleTaskCompletionHandler,
   deleteTaskHandler,
-  // editTaskHandler,
+  editTaskHandler,
 };

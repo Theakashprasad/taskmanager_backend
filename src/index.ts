@@ -21,6 +21,7 @@ const server = http.createServer(app);
 app.use(
   cors({
     origin: [
+      "http://localhost:5173",
       "https://taskmanager-rkd526bek-akashs-projects-848d32a6.vercel.app",
       "https://taskmanager-rose-six.vercel.app",
     ],
@@ -38,6 +39,7 @@ app.use(express.urlencoded({ extended: true }));
 const io = new Server(server, {
   cors: {
     origin: [
+      "http://localhost:5173",
       "https://taskmanager-rkd526bek-akashs-projects-848d32a6.vercel.app",
       "https://taskmanager-rose-six.vercel.app",
     ],
@@ -62,7 +64,7 @@ io.on("connection", (socket: any) => {
   socket.on("getTasks", getTasksHandler.bind(null, socket));
   socket.on("isCompleted", toggleTaskCompletionHandler.bind(null, socket));
   socket.on("deleteTask", deleteTaskHandler.bind(null, socket));
-  // socket.on("handleTaskEdit", editTaskHandler.bind(null, socket));
+  socket.on("handleTaskEdit", editTaskHandler.bind(null, socket));
 
   socket.on("disconnect", () => {
     console.log("A user disconnected");
